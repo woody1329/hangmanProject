@@ -58,7 +58,7 @@ public static class MainClass
 		public List<char> missedLetters = new List<char>();
 		public string hungWord;
 
-		public Hangman(int minWLength = 3, int maxWLength = 12, int guesses = 6, string wordFilePath = @"c:\Users\Homeworking\Desktop\words.txt")
+		public Hangman(int minWLength = 3, int maxWLength = 12, int guesses = 6, string wordFilePath = "../../../words.txt")
 		{
 			minWordLength = minWLength;
 			maxWordLength = maxWLength;
