@@ -49,7 +49,7 @@ namespace XUnitTestProject1
         {
             Hangman game = new Hangman();
             char testString = 'r';
-            Assert.True(game.validLetterGuess(testString));
+            Assert.True(game.ValidLetterGuess(testString));
         }
         [Fact]
         public void testLetterInWord()
@@ -67,9 +67,9 @@ namespace XUnitTestProject1
         {
             Hangman game = new Hangman();
             game.word = "road";
-            game.updatedWord = game.word;
-            game.UpdateWord("road", 'r');
-            Assert.Equal("oad", game.updatedWord);
+            game.UnguessedLetters = game.word;
+            game.IndexesOfLetters("road", 'r');
+            Assert.Equal("oad", game.UnguessedLetters);
         }
 
         [Fact]
@@ -80,15 +80,15 @@ namespace XUnitTestProject1
             var sr = new StringReader(testString);
             Console.SetIn(sr);
             game.word = "road";
-            game.updatedWord = "road";
+            game.UnguessedLetters = "road";
             game.currentLetter = 'r';
-            List<int> index = game.UpdateWord(game.word, 'r');
-            Assert.Equal("oad", game.updatedWord);
-            game.updateLettersLeft('r');
+            List<int> index = game.IndexesOfLetters(game.word, 'r');
+            Assert.Equal("oad", game.UnguessedLetters);
+            game.UpdateLettersLeft('r');
             //int index = game.UpdateWord(game.word, 'r');
             Assert.Equal(new List<int>() { 0 },index);
             game.hungWord = game.CreateRepeatedString("_ ", game.word.Length);
-            game.updateHangGuess(index);
+            game.UpdateHangGuess(index);
             Assert.Equal("r _ _ _ ", game.hungWord);
         }
     }

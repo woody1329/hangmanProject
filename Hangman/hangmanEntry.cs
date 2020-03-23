@@ -4,12 +4,12 @@ using System.Collections.Generic;
 using System.Text;
 
 namespace Hman
-{ 
+{
 
-/// <summary>
-/// Class containing Main method.
-/// </summary>
-public static class MainClass
+	/// <summary>
+	/// Class containing Main method.
+	/// </summary>
+	public static class MainClass
 	{
 		static void Main()
 		{
@@ -27,9 +27,9 @@ public static class MainClass
 		}
 	}
 
-/// <summary>
-/// Hangman class, containing methods and fields for starting a hangman game.
-/// </summary>
+	/// <summary>
+	/// Hangman class, containing methods and fields for starting a hangman game.
+	/// </summary>
 	public class Hangman
 	{
 
@@ -53,11 +53,11 @@ public static class MainClass
 		public int guessesLeft;
 
 		public char currentLetter;
-		public string updatedWord;
+		public string UnguessedLetters;
 		public string LettersLeftInAlphabet = "abcdefghijklmnopqrstuvwxyz";
 		public List<char> missedLetters = new List<char>();
 		public string hungWord;
-
+		
 		public Hangman(int minWLength = 3, int maxWLength = 12, int guesses = 6, string wordFilePath = "../../../words.txt")
 		{
 			minWordLength = minWLength;
@@ -95,7 +95,7 @@ public static class MainClass
 			while(Console.KeyAvailable==false)
 			{
 				enteredLetter = Console.ReadKey().KeyChar;
-				if (validLetterGuess(enteredLetter))
+				if (ValidLetterGuess(enteredLetter))
 				{
 					Console.WriteLine();
 					break;
@@ -123,7 +123,7 @@ public static class MainClass
 		{
 			System.Random randomGenerator = new System.Random();
 			word = wordsList[(int)(randomGenerator.NextDouble() * wordsList.Count)];
-			updatedWord = word;
+			UnguessedLetters = word;
 			return word;
 		}
 
@@ -132,7 +132,7 @@ public static class MainClass
 		/// </summary>
 		/// <param name="guessedLetter"></param>
 		/// <returns></returns>
-		public bool validLetterGuess(char guessedLetter)
+		public bool ValidLetterGuess(char guessedLetter)
 		{
 			char[] validLetters = { 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z' };
 			foreach (char c in validLetters)
@@ -149,25 +149,20 @@ public static class MainClass
 		/// You must check the original word contains the letter, before updating the remaining letters.
 		/// </summary>
 		/// <param name="v"></param>
-		public void updateLettersLeft(char v)
+		public void UpdateLettersLeft(char v)
 		{
 			if (LettersLeftInAlphabet.Contains(v))
-				LettersLeftInAlphabet = LettersLeftInAlphabet.Remove(LettersLeftInAlphabet.IndexOf(v), 1);
-			
+				LettersLeftInAlphabet = LettersLeftInAlphabet.Remove(LettersLeftInAlphabet.IndexOf(v), 1);	
 		}
-/// <summary>
-/// updates the remaining letters to be guessed, returning the index that corresponds to the supplied chars position
-/// in the <b>original word</b>
-/// </summary>
-/// <param name="w"></param>
-/// <param name="v"></param>
-/// <returns></returns>
-		public List<int> UpdateWord(string w, char v)
+		/// <summary>
+		/// updates the remaining letters to be guessed, returning a lits of indexes that corresponds to the supplied chars position(s)
+		/// in the <b>original word</b>
+		/// </summary>
+		/// <param name="w"></param>
+		/// <param name="v"></param>
+		/// <returns></returns>
+		public List<int> IndexesOfLetters(string w, char v)
 		{
-
-			//so we find the char in the shortened string.
-			//halt -> hlt 0,0,1
-			//halt -> hal 0,0,1 -> al 1,0,2
 			List<int> letterIndexes = new List<int>();
 			int charCounter = 0;
 			foreach (char a in w)
@@ -176,13 +171,15 @@ public static class MainClass
 
 				charCounter++;
 			}
-			int indexUpdated = this.updatedWord.IndexOf(v);
-			int indexWord = word.IndexOf(v);
-			int index = indexUpdated;
-			int difference = word.Length - this.updatedWord.Length;
-			this.updatedWord = this.updatedWord.Remove(this.updatedWord.IndexOf(v),1);
-			
+
+			//UpdateW(v);
 			return letterIndexes;
+		}
+
+		private void UpdateUnguessed(char v)
+		{
+			this.UnguessedLetters = this.UnguessedLetters.Remove(this.UnguessedLetters.IndexOf(v), 1);
+			Console.WriteLine(UnguessedLetters);
 		}
 
 		/// <summary>
@@ -202,29 +199,22 @@ public static class MainClass
 
 
 		}
-/// <summary>
-/// Updates the HangWord string with a correct guess.
-/// e.g. "_ _ _ " -> "_ a _ " -> "c a _ " -> "c a t " 
-/// </summary>
-/// <param name="index"></param>
-		public void updateHangGuess(List<int> letterIndexes)
+		/// <summary>
+		/// Updates the HangWord string with a correct guess.
+		/// e.g. "_ _ _ " -> "_ a _ " -> "c a _ " -> "c a t " 
+		/// </summary>
+		/// <param name="index"></param>
+		public void UpdateHangGuess(List<int> letterIndexes)
 		{
-			//int x = 4;
-			//System.Console.WriteLine(index.ToString());
 			foreach (int i in letterIndexes)
 			{
 				this.hungWord = this.hungWord.Remove(i == 0 ? 0 : i * 2, 1)
-												.Insert(i == 0 ? 0 : i * 2, this.currentLetter.ToString());
+											 .Insert(i == 0 ? 0 : i * 2, this.currentLetter.ToString());
 				if (!this.hungWord.Contains("_"))
 				{
-				//System.Console.WriteLine("Congratulations!");
-				guessesLeft = -1;
-
+					guessesLeft = -1;
 				}
 			}
-			
-			//so, 0,1,2,3,4,5 would go to 0,2,4,6,8,10
-			//HangWord = HangWord.
 		}
 
 		public void RunGame()
@@ -232,13 +222,10 @@ public static class MainClass
 			hungWord = CreateRepeatedString("_ ", word.Length);
 			System.Console.WriteLine(CreateRepeatedString("_ ", word.Length));
 			System.Console.WriteLine($"Your word is {word.Length} letters long! You have 6 guesses, good luck! ");
-			//currentLetter = currentGame.submittedGuess();
 			do
 			{
 				currentLetter = SubmittedGuess();
-				processCurrentLetter();
-
-				
+				ProcessCurrentLetter();	
 			} while (guessesLeft > 0);
 
 			if (guessesLeft < 0) Console.WriteLine("Congratulations, you are a winner!");
@@ -246,9 +233,9 @@ public static class MainClass
 
 		}
 
-		private void processCurrentLetter()
+		private void ProcessCurrentLetter()
 		{
-			if (validLetterGuess(currentLetter))
+			if (ValidLetterGuess(currentLetter))
 			{
 				CheckForMultipleLetters();
 				if (!missedLetters.Contains(currentLetter) && !word.Contains(currentLetter))
@@ -257,7 +244,6 @@ public static class MainClass
 					guessesLeft--;
 					Console.WriteLine($"You have {guessesLeft} guesses left.");
 				}
-				//else if (HangWord.Contains(currentLetter)) System.Console.WriteLine("You already guessed that letter!");
 				System.Console.WriteLine(hungWord);
 				PrintMissedLetters();
 			}
@@ -267,15 +253,15 @@ public static class MainClass
 		private int CheckForMultipleLetters()
 		{
 			int i = 0;
-			while (LetterInWord(currentLetter, updatedWord))
+			while (LetterInWord(currentLetter, UnguessedLetters))
 			{
 				i++;
 				if (i == 1) System.Console.WriteLine("Letter is in word");
 				else Console.WriteLine("Letter is in word again, luck is on your side!");
-				updateHangGuess(UpdateWord(word, currentLetter));
-				updateLettersLeft(currentLetter);
+				UpdateUnguessed(currentLetter);
+				UpdateLettersLeft(currentLetter);
 			}
-
+			UpdateHangGuess(IndexesOfLetters(word, currentLetter));
 			return i;
 		}
 
