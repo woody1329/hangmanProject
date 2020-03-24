@@ -53,8 +53,8 @@ namespace Hman
 		public int guessesLeft;
 
 		public char currentLetter;
-		public string UnguessedLetters;
-		public string LettersLeftInAlphabet = "abcdefghijklmnopqrstuvwxyz";
+		public string lettersLeftInWord;
+		public string lettersLeftInAlphabet = "abcdefghijklmnopqrstuvwxyz";
 		public List<char> missedLetters = new List<char>();
 		public string hungWord;
 		
@@ -65,8 +65,7 @@ namespace Hman
 			guessesLeft = guesses;
 			
 			WordListFromFile(wordFilePath);
-			PopulateWord();
-			hungWord = CreateRepeatedString("_ ", word.Length);
+			PopulateWordFields();
 
 		}
 		/// <summary>
@@ -119,11 +118,12 @@ namespace Hman
 		/// Supplies a pseudorandom word from the worsList
 		/// </summary>
 		/// <returns>string word</returns>
-		public string PopulateWord()
+		public string PopulateWordFields()
 		{
 			System.Random randomGenerator = new System.Random();
 			word = wordsList[(int)(randomGenerator.NextDouble() * wordsList.Count)];
-			UnguessedLetters = word;
+			lettersLeftInWord = word;
+			hungWord = CreateRepeatedString("_ ", word.Length);
 			return word;
 		}
 
@@ -149,10 +149,10 @@ namespace Hman
 		/// You must check the original word contains the letter, before updating the remaining letters.
 		/// </summary>
 		/// <param name="v"></param>
-		public void UpdateLettersLeft(char v)
+		public void UpdateAlphabetLetters(char v)
 		{
-			if (LettersLeftInAlphabet.Contains(v))
-				LettersLeftInAlphabet = LettersLeftInAlphabet.Remove(LettersLeftInAlphabet.IndexOf(v), 1);	
+			if (lettersLeftInAlphabet.Contains(v))
+				lettersLeftInAlphabet = lettersLeftInAlphabet.Remove(lettersLeftInAlphabet.IndexOf(v), 1);	
 		}
 		/// <summary>
 		/// updates the remaining letters to be guessed, returning a lits of indexes that corresponds to the supplied chars position(s)
@@ -176,10 +176,10 @@ namespace Hman
 			return letterIndexes;
 		}
 
-		private void UpdateUnguessed(char v)
+		private void UpdateLettersLeftInWord(char v)
 		{
-			this.UnguessedLetters = this.UnguessedLetters.Remove(this.UnguessedLetters.IndexOf(v), 1);
-			Console.WriteLine(UnguessedLetters);
+			this.lettersLeftInWord = this.lettersLeftInWord.Remove(this.lettersLeftInWord.IndexOf(v), 1);
+			Console.WriteLine(lettersLeftInWord);
 		}
 
 		/// <summary>
@@ -204,7 +204,7 @@ namespace Hman
 		/// e.g. "_ _ _ " -> "_ a _ " -> "c a _ " -> "c a t " 
 		/// </summary>
 		/// <param name="index"></param>
-		public void UpdateHangGuess(List<int> letterIndexes)
+		public void UpdateHungWord(List<int> letterIndexes)
 		{
 			foreach (int i in letterIndexes)
 			{
@@ -253,15 +253,15 @@ namespace Hman
 		private int CheckForMultipleLetters()
 		{
 			int i = 0;
-			while (LetterInWord(currentLetter, UnguessedLetters))
+			while (LetterInWord(currentLetter, lettersLeftInWord))
 			{
 				i++;
 				if (i == 1) System.Console.WriteLine("Letter is in word");
 				else Console.WriteLine("Letter is in word again, luck is on your side!");
-				UpdateUnguessed(currentLetter);
-				UpdateLettersLeft(currentLetter);
+				UpdateLettersLeftInWord(currentLetter);
+				UpdateAlphabetLetters(currentLetter);
 			}
-			UpdateHangGuess(IndexesOfLetters(word, currentLetter));
+			UpdateHungWord(IndexesOfLetters(word, currentLetter));
 			return i;
 		}
 
