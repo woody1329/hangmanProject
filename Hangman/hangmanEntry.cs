@@ -69,7 +69,7 @@ namespace Hman
 
 		}
 		/// <summary>
-		/// LoadWordsFromFile 
+		/// WordListFromFile 
 		/// Supply path of file containing lower case strtings, one per line
 		/// </summary>
 		/// <param name="filePath"></param>
